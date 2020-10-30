@@ -1,0 +1,35 @@
+{{ define "index.html" }}
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>{{ .title}}</title>
+        <script crossorigin="anonymous"
+                integrity="sha512-WNLxfP/8cVYL9sj8Jnp6et0BkubLP31jhTG9vhL/F5uEZmg5wEzKoXp1kJslzPQWwPT1eyMiSxlKCgzHLOTOTQ=="
+                src="https://lib.baomitu.com/jquery/3.5.1/jquery.js"></script>
+        <script>
+
+            $(async () => {
+
+            });
+        </script>
+    </head>
+    <body>
+    {{.isFirst}}
+    添加新的链接
+
+
+    <form action="/user/addConn" method="post"><br/>
+        数据类型：<input type="text" name="type"> <br/>
+        名称： <input type="text" name="nickname"><br/>
+        主机： <input type="text" name="host"><br/>
+        端口： <input type="text" name="port"><br/>
+        用户名： <input type="text" name="username"><br/>
+        密码： <input type="text" name="password"><br/>
+        <input type="submit" value="保存">
+    </form>
+    </body>
+    </html>
+
+{{ end }}
