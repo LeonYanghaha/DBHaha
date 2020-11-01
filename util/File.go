@@ -45,6 +45,7 @@ func ReadFile(path string) []string {
 func ParseFile(path string) []model.Connection {
 
 	lineContext := ReadFile(path)
+	fmt.Println(lineContext)
 	var connList []model.Connection
 
 	for i, v := range lineContext {
@@ -52,8 +53,13 @@ func ParseFile(path string) []model.Connection {
 		if i == 0 {
 			continue
 		}
-		jsonStr, _ := AesDecrypt(v, Secret)
-		err := json.Unmarshal(jsonStr, &tempConn)
+		jsonStr, err := AesDecrypt(v, Secret)
+		if err != nil {
+			fmt.Println(err)
+			return nil
+		}
+		fmt.Println("----------------", hex.EncodeToString(jsonStr))
+		err = json.Unmarshal(jsonStr, &tempConn)
 		if err != nil {
 			connList = append(connList, tempConn)
 		}

@@ -19,6 +19,10 @@
     {{.isFirst}}
     添加新的链接
 
+    {{range $k, $v := .connList}}
+        {{$k}} => {{$v.NickName}} - {{$v.Type}} - {{$v.Host}} - {{$v.UserName}}
+    {{end}}
+
 
     <form action="/user/addConn" method="post"><br/>
         数据类型：<input type="text" name="type"> <br/>

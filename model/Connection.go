@@ -1,6 +1,7 @@
 package model
 
 type Connection struct {
+	Id       string `form:"id" json:"id" xml:"id"`
 	NickName string `form:"nickname" json:"nickname" xml:"nickname"  binding:"required"`
 	Type     string `form:"type" json:"type" xml:"type"  binding:"required"`
 	Host     string `form:"host" json:"host" xml:"host"  binding:"required"`

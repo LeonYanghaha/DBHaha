@@ -16,7 +16,7 @@ func AddConn(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
+	conn.Id = util.GetRandomString(10)
 	connByteSlice, _ := json.Marshal(conn)
 	secretByteSlice := []byte(util.Secret)
 	str, err := util.AesEncrypt(connByteSlice, secretByteSlice)
@@ -44,6 +44,7 @@ func Index(c *gin.Context) {
 	}
 
 	fileContext := util.ParseFile(filePath)
+	fmt.Println(fileContext)
 	c.HTML(http.StatusOK, "index.html", gin.H{
 		"isFirst":  !isFirst,
 		"connList": fileContext,

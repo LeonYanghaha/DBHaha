@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
-	"encoding/base64"
 )
 
 //text := "yanghaha{}{}{}[]()<>,."
@@ -45,8 +44,8 @@ func AesEncrypt(origData, key []byte) ([]byte, error) {
 //AES解密
 func AesDecrypt(cryptedStr, keyStr string) ([]byte, error) {
 
-	crypted, _ := base64.StdEncoding.DecodeString(cryptedStr)
-	key, _ := base64.StdEncoding.DecodeString(keyStr)
+	crypted := []byte(cryptedStr)
+	key := []byte(keyStr)
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return nil, err
