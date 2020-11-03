@@ -14,7 +14,7 @@ func InitRouter() *gin.Engine {
 	gin.SetMode(util.RunMode)
 
 	// 用户操作相关的router
-	r.Any("/", Index)
+	r.GET("/", Index)
 	r.POST("/user/addConn", AddConn)
 
 	return r

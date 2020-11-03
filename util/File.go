@@ -3,7 +3,6 @@ package util
 import (
 	"bufio"
 	"bytes"
-	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -45,7 +44,7 @@ func ReadFile(path string) []string {
 func ParseFile(path string) []model.Connection {
 
 	lineContext := ReadFile(path)
-	fmt.Println(lineContext)
+	fmt.Println("lineContext", lineContext)
 	var connList []model.Connection
 
 	for i, v := range lineContext {
@@ -53,17 +52,20 @@ func ParseFile(path string) []model.Connection {
 		if i == 0 {
 			continue
 		}
-		jsonStr, err := AesDecrypt(v, Secret)
-		if err != nil {
+		jsonStr, _ := AesDecrypt([]byte(v), []byte(Secret))
+		//if err != nil {
+		//	fmt.Println(err)
+		//	return nil
+		//}
+		fmt.Println("----------------", string(jsonStr))
+		err := json.Unmarshal([]byte(strings.ReplaceAll(string(jsonStr), "'", "\"")), &tempConn)
+		fmt.Println("tempConn", tempConn)
+		if err == nil {
 			fmt.Println(err)
-			return nil
-		}
-		fmt.Println("----------------", hex.EncodeToString(jsonStr))
-		err = json.Unmarshal(jsonStr, &tempConn)
-		if err != nil {
 			connList = append(connList, tempConn)
 		}
 	}
+	fmt.Println(connList, "connList")
 	return connList
 }
 
@@ -77,8 +79,9 @@ func WriteFile(fileName string, strTest []byte) {
 		log.Println(err)
 	}
 	defer f.Close()
-
-	if _, err := f.WriteString(hex.EncodeToString(strTest) + "\n"); err != nil {
+	fmt.Println("string(strTest))", string(strTest))
+	buf := fmt.Sprintf(string(strTest) + "\n")
+	if _, err := f.WriteString(buf); err != nil {
 		log.Println(err)
 	}
 }
@@ -99,15 +102,15 @@ func initFile(fileName string) {
 	}
 	_, _ = os.Create(fileName)
 
-	f, err := os.OpenFile(fileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		log.Println(err)
-	}
-	defer f.Close()
-
-	if _, err := f.WriteString("---DBHaha configuration file, please do not modify it at will---" + "\n"); err != nil {
-		log.Println(err)
-	}
+	//f, err := os.OpenFile(fileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	//if err != nil {
+	//	log.Println(err)
+	//}
+	//defer f.Close()
+	//
+	//if _, err := f.WriteString("---DBHaha configuration file, please do not modify it at will---" + "\n"); err != nil {
+	//	log.Println(err)
+	//}
 }
 
 //检查文件是否存在

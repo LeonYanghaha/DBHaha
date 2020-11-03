@@ -6,15 +6,15 @@ import (
 	"crypto/cipher"
 )
 
-//text := "yanghaha{}{}{}[]()<>,."
-//AesKey := []byte("0f90023fc9ae101e")
-//fmt.Printf("明文: %s\n秘钥: %s\n", text, string(AesKey))
-//encrypted, _ := util.AesEncrypt([]byte(text), AesKey)
-//fmt.Println(base64.StdEncoding.EncodeToString(encrypted))
+////text := "yanghaha{}{}{}[]()<>,."
+////AesKey := []byte("0f90023fc9ae101e")
+////fmt.Printf("明文: %s\n秘钥: %s\n", text, string(AesKey))
+////encrypted, _ := util.AesEncrypt([]byte(text), AesKey)
+////fmt.Println(base64.StdEncoding.EncodeToString(encrypted))
+////
+////str, _ := util.AesDecrypt(encrypted, AesKey)
+////fmt.Print(string(str))
 //
-//str, _ := util.AesDecrypt(encrypted, AesKey)
-//fmt.Print(string(str))
-
 func PKCS7Padding(ciphertext []byte, blockSize int) []byte {
 	padding := blockSize - len(ciphertext)%blockSize
 	padtext := bytes.Repeat([]byte{byte(padding)}, padding)
@@ -42,10 +42,8 @@ func AesEncrypt(origData, key []byte) ([]byte, error) {
 }
 
 //AES解密
-func AesDecrypt(cryptedStr, keyStr string) ([]byte, error) {
+func AesDecrypt(crypted, key []byte) ([]byte, error) {
 
-	crypted := []byte(cryptedStr)
-	key := []byte(keyStr)
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return nil, err

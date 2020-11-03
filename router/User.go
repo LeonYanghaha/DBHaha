@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"redis-haha/model"
 	"redis-haha/util"
+	"strings"
 )
 
 func AddConn(c *gin.Context) {
@@ -17,14 +18,22 @@ func AddConn(c *gin.Context) {
 		return
 	}
 	conn.Id = util.GetRandomString(10)
-	connByteSlice, _ := json.Marshal(conn)
-	secretByteSlice := []byte(util.Secret)
-	str, err := util.AesEncrypt(connByteSlice, secretByteSlice)
-	if err != nil {
-		fmt.Println(err)
-		return
+	fmt.Println("conn", conn)
+	connByteSlice, ee := json.Marshal(conn)
+	if ee != nil {
+		fmt.Println(ee)
 	}
-	util.WriteFile(util.GetUserInfoFile(), str)
+	connByteStr := strings.Replace(string(connByteSlice), "\"", "'", -1)
+	fmt.Println("util.Secret", util.Secret)
+	fmt.Println("connByteStr", connByteStr)
+	str := string(util.DesEncrypt([]byte(connByteStr), []byte(util.Secret)))
+	//if err != nil {
+	//	fmt.Println(err)
+	//	return
+	//}
+	fmt.Println("WriteFile", str)
+	fmt.Println("WriteFile", string(str))
+	util.WriteFile(util.GetUserInfoFile(), []byte(str))
 	c.JSON(http.StatusBadRequest, gin.H{"error": "success"})
 	return
 }
@@ -44,7 +53,7 @@ func Index(c *gin.Context) {
 	}
 
 	fileContext := util.ParseFile(filePath)
-	fmt.Println(fileContext)
+	fmt.Println("fileContext", fileContext)
 	c.HTML(http.StatusOK, "index.html", gin.H{
 		"isFirst":  !isFirst,
 		"connList": fileContext,
