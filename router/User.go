@@ -1,13 +1,12 @@
 package router
 
 import (
+	"DBHaha/model"
+	"DBHaha/util"
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"redis-haha/model"
-	"redis-haha/util"
-	"strings"
 )
 
 func AddConn(c *gin.Context) {
@@ -19,21 +18,13 @@ func AddConn(c *gin.Context) {
 	}
 	conn.Id = util.GetRandomString(10)
 	fmt.Println("conn", conn)
-	connByteSlice, ee := json.Marshal(conn)
+	connByteSlice, ee := json.Marshal(*conn.EncryptField())
 	if ee != nil {
 		fmt.Println(ee)
 	}
-	connByteStr := strings.Replace(string(connByteSlice), "\"", "'", -1)
-	fmt.Println("util.Secret", util.Secret)
-	fmt.Println("connByteStr", connByteStr)
-	str := string(util.DesEncrypt([]byte(connByteStr), []byte(util.Secret)))
-	//if err != nil {
-	//	fmt.Println(err)
-	//	return
-	//}
-	fmt.Println("WriteFile", str)
-	fmt.Println("WriteFile", string(str))
-	util.WriteFile(util.GetUserInfoFile(), []byte(str))
+	fmt.Println("connByteStr", string(connByteSlice))
+
+	util.WriteFile(util.GetUserInfoFile(), connByteSlice)
 	c.JSON(http.StatusBadRequest, gin.H{"error": "success"})
 	return
 }
@@ -53,7 +44,14 @@ func Index(c *gin.Context) {
 	}
 
 	fileContext := util.ParseFile(filePath)
-	fmt.Println("fileContext", fileContext)
+	var connList []model.Connection
+	for _, v := range fileContext {
+		var tempConn model.Connection
+		err := json.Unmarshal([]byte(v), tempConn)
+		if err == nil {
+			connList = append(connList, *tempConn.DecryptField())
+		}
+	}
 	c.HTML(http.StatusOK, "index.html", gin.H{
 		"isFirst":  !isFirst,
 		"connList": fileContext,

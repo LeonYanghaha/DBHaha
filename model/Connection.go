@@ -1,11 +1,37 @@
 package model
 
+import (
+	"DBHaha/util"
+)
+
 type Connection struct {
-	Id       string `form:"id" json:"id" xml:"id"`
-	NickName string `form:"nickname" json:"nickname" xml:"nickname"  binding:"required"`
-	Type     string `form:"type" json:"type" xml:"type"  binding:"required"`
-	Host     string `form:"host" json:"host" xml:"host"  binding:"required"`
-	Port     string `form:"port" json:"port" xml:"port"  binding:"required"`
-	UserName string `form:"username" json:"username" xml:"username"  binding:"required"`
-	PassWord string `form:"password" json:"password" xml:"password"  binding:"required"`
+	Id       string `form:"id" json:"Id" xml:"id"`
+	NickName string `form:"nickname" json:"Nickname" xml:"nickname"  binding:"required"`
+	Type     string `form:"type" json:"Type" xml:"type"  binding:"required"`
+	Host     string `form:"host" json:"Host" xml:"host"  binding:"required"`
+	Port     string `form:"port" json:"Port" xml:"port"  binding:"required"`
+	UserName string `form:"username" json:"Username" xml:"username"  binding:"required"`
+	PassWord string `form:"password" json:"Password" xml:"password"  binding:"required"`
+}
+
+// 加密各个字段
+func (conn *Connection) EncryptField() *Connection {
+
+	conn.Type = util.AesEncrypt(conn.Type)
+	conn.Host = util.AesEncrypt(conn.Host)
+	conn.Port = util.AesEncrypt(conn.Port)
+	conn.UserName = util.AesEncrypt(conn.UserName)
+	conn.PassWord = util.AesEncrypt(conn.PassWord)
+	return conn
+}
+
+// 解密各个字段
+func (conn *Connection) DecryptField() *Connection {
+
+	conn.Type = util.AesDecrypt(conn.Type)
+	conn.Host = util.AesDecrypt(conn.Host)
+	conn.Port = util.AesDecrypt(conn.Port)
+	conn.UserName = util.AesDecrypt(conn.UserName)
+	conn.PassWord = util.AesDecrypt(conn.PassWord)
+	return conn
 }

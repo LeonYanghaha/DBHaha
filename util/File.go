@@ -3,7 +3,6 @@ package util
 import (
 	"bufio"
 	"bytes"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -12,7 +11,6 @@ import (
 	"os/exec"
 	"os/user"
 	"path"
-	"redis-haha/model"
 	"runtime"
 	"strings"
 )
@@ -41,32 +39,18 @@ func ReadFile(path string) []string {
 }
 
 // 解析文件内容
-func ParseFile(path string) []model.Connection {
+func ParseFile(path string) []string {
 
 	lineContext := ReadFile(path)
-	fmt.Println("lineContext", lineContext)
-	var connList []model.Connection
+	var lineConTextList []string
 
 	for i, v := range lineContext {
-		var tempConn model.Connection
-		if i == 0 {
+		if i == 0 { // 过滤掉文件第一行
 			continue
 		}
-		jsonStr, _ := AesDecrypt([]byte(v), []byte(Secret))
-		//if err != nil {
-		//	fmt.Println(err)
-		//	return nil
-		//}
-		fmt.Println("----------------", string(jsonStr))
-		err := json.Unmarshal([]byte(strings.ReplaceAll(string(jsonStr), "'", "\"")), &tempConn)
-		fmt.Println("tempConn", tempConn)
-		if err == nil {
-			fmt.Println(err)
-			connList = append(connList, tempConn)
-		}
+		lineConTextList = append(lineConTextList, v)
 	}
-	fmt.Println(connList, "connList")
-	return connList
+	return lineConTextList
 }
 
 // 写入文件
@@ -102,15 +86,15 @@ func initFile(fileName string) {
 	}
 	_, _ = os.Create(fileName)
 
-	//f, err := os.OpenFile(fileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	//if err != nil {
-	//	log.Println(err)
-	//}
-	//defer f.Close()
-	//
-	//if _, err := f.WriteString("---DBHaha configuration file, please do not modify it at will---" + "\n"); err != nil {
-	//	log.Println(err)
-	//}
+	f, err := os.OpenFile(fileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Println(err)
+	}
+	defer f.Close()
+
+	if _, err := f.WriteString("---DBHaha configuration file, please do not modify it at will---" + "\n"); err != nil {
+		log.Println(err)
+	}
 }
 
 //检查文件是否存在
@@ -130,9 +114,9 @@ func GetUserInfoFile() string {
 }
 
 func Home() (string, error) {
-	user, err := user.Current()
+	current, err := user.Current()
 	if nil == err {
-		return user.HomeDir, nil
+		return current.HomeDir, nil
 	}
 	if "windows" == runtime.GOOS {
 		return homeWindows()
@@ -162,9 +146,9 @@ func homeUnix() (string, error) {
 
 func homeWindows() (string, error) {
 	drive := os.Getenv("HOMEDRIVE")
-	path := os.Getenv("HOMEPATH")
-	home := drive + path
-	if drive == "" || path == "" {
+	gateau := os.Getenv("HOMEPATH")
+	home := drive + gateau
+	if drive == "" || gateau == "" {
 		home = os.Getenv("USERPROFILE")
 	}
 	if home == "" {

@@ -4,17 +4,10 @@ import (
 	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
+	"encoding/hex"
+	"log"
 )
 
-////text := "yanghaha{}{}{}[]()<>,."
-////AesKey := []byte("0f90023fc9ae101e")
-////fmt.Printf("明文: %s\n秘钥: %s\n", text, string(AesKey))
-////encrypted, _ := util.AesEncrypt([]byte(text), AesKey)
-////fmt.Println(base64.StdEncoding.EncodeToString(encrypted))
-////
-////str, _ := util.AesDecrypt(encrypted, AesKey)
-////fmt.Print(string(str))
-//
 func PKCS7Padding(ciphertext []byte, blockSize int) []byte {
 	padding := blockSize - len(ciphertext)%blockSize
 	padtext := bytes.Repeat([]byte{byte(padding)}, padding)
@@ -28,30 +21,36 @@ func PKCS7UnPadding(origData []byte) []byte {
 }
 
 //AES加密
-func AesEncrypt(origData, key []byte) ([]byte, error) {
+func AesEncrypt(origDataStr string) string {
+	origData := []byte(origDataStr)
+	key := []byte(Secret)
 	block, err := aes.NewCipher(key)
 	if err != nil {
-		return nil, err
+		log.Println(err)
+		return ""
 	}
 	blockSize := block.BlockSize()
 	origData = PKCS7Padding(origData, blockSize)
 	blockMode := cipher.NewCBCEncrypter(block, key[:blockSize])
 	crypted := make([]byte, len(origData))
 	blockMode.CryptBlocks(crypted, origData)
-	return crypted, nil
+	return hex.EncodeToString(crypted)
 }
 
 //AES解密
-func AesDecrypt(crypted, key []byte) ([]byte, error) {
+func AesDecrypt(cryptedStr string) string {
 
+	key := []byte(Secret)
+	crypted, _ := hex.DecodeString(cryptedStr)
 	block, err := aes.NewCipher(key)
 	if err != nil {
-		return nil, err
+		log.Println(err)
+		return ""
 	}
 	blockSize := block.BlockSize()
 	blockMode := cipher.NewCBCDecrypter(block, key[:blockSize])
 	origData := make([]byte, len(crypted))
 	blockMode.CryptBlocks(origData, crypted)
 	origData = PKCS7UnPadding(origData)
-	return origData, nil
+	return string(origData)
 }

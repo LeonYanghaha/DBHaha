@@ -6,18 +6,6 @@ import (
 	"time"
 )
 
-//qq := util.GetRedisClient(util.RedisInfo{
-//	Addr:     "localhost:6379",
-//	Password: "",
-//	DB:       1,
-//})
-//
-//fmt.Println(qq.Set("leon", 78, 0))
-//
-//s := qq.Get("leonss")
-//
-//fmt.Println(s.Val())
-
 type RedisInfo struct {
 	Addr      string
 	Password  string

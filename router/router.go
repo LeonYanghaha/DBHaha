@@ -1,8 +1,8 @@
 package router
 
 import (
+	"DBHaha/util"
 	"github.com/gin-gonic/gin"
-	"redis-haha/util"
 )
 
 func InitRouter() *gin.Engine {
