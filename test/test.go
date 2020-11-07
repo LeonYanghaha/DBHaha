@@ -1,10 +1,10 @@
 package main
 
 import (
+	"DBHaha/util"
 	"bytes"
 	"crypto/cipher"
 	"crypto/des"
-	"encoding/hex"
 	"errors"
 	"fmt"
 )
@@ -113,27 +113,29 @@ func unPaddingNumber(src []byte) ([]byte, error) {
 }
 
 func main() {
-	src := "一行白鹭上青天"  //明文
-	key := "12345678" //秘钥
+	//src := "一行白鹭上青天"  //明文
+	//key := "12345678" //秘钥
+	//
+	////加密处理
+	//encryptData, err := desCBCEncrypt([]byte(src), []byte(key))
+	//if err != nil {
+	//	fmt.Println("err:", err)
+	//	return
+	//}
+	//
+	//fmt.Print("encryptData：", hex.EncodeToString(encryptData))
+	//
+	//key = "12345678" //秘钥
+	////调用解密函数
+	//plainText, err := desCBCDecrypt(encryptData, []byte(key))
+	//if err != nil {
+	//	fmt.Println("err:", err)
+	//	return
+	//}
+	////hex.EncodeToString(byte_data)
+	////hex.DecodeString(hex_string_data)
+	//fmt.Printf("解密后的数据: %s\n", plainText)
+	//fmt.Printf("解密后的数据 hex : %x\n", plainText)
 
-	//加密处理
-	encryptData, err := desCBCEncrypt([]byte(src), []byte(key))
-	if err != nil {
-		fmt.Println("err:", err)
-		return
-	}
-
-	fmt.Print("encryptData：", hex.EncodeToString(encryptData))
-
-	key = "12345678" //秘钥
-	//调用解密函数
-	plainText, err := desCBCDecrypt(encryptData, []byte(key))
-	if err != nil {
-		fmt.Println("err:", err)
-		return
-	}
-	//hex.EncodeToString(byte_data)
-	//hex.DecodeString(hex_string_data)
-	fmt.Printf("解密后的数据: %s\n", plainText)
-	fmt.Printf("解密后的数据 hex : %x\n", plainText)
+	fmt.Println(util.GetUserInfoFile())
 }

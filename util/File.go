@@ -38,12 +38,56 @@ func ReadFile(path string) []string {
 	return lineContext
 }
 
-// 解析文件内容
+// 解析文件内容--通过ID获取指定行
+func ParseFileGetID(id string) string {
+	fileContextList := ParseFile(GetUserInfoFile())
+	var lineStr string
+	for _, v := range fileContextList {
+		if find := strings.Contains(v, id); find {
+			lineStr = v
+			break
+		}
+	}
+	return lineStr
+}
+
+//删除指定的行
+func DeleteFileLineById(id string) error {
+	fileContextList := ParseFile(GetUserInfoFile())
+	removeInfoFile() // 先读取，后删除
+	var fileData string
+	for _, v := range fileContextList {
+		v += "\n"
+		if find := strings.Contains(v, id); find {
+			continue
+		}
+		fileData += v
+	}
+	WriteFile(GetUserInfoFile(), []byte(fileData))
+	return nil
+}
+
+//修改用户的文件
+func UpdateFileLineById(id, contextText string) error {
+	fileContextList := ParseFile(GetUserInfoFile())
+	removeInfoFile() // 先读取，后删除
+	var fileData string
+	for _, v := range fileContextList {
+		v += "\n"
+		if find := strings.Contains(v, id); find {
+			v = contextText + "\n"
+		}
+		fileData += v
+	}
+	WriteFile(GetUserInfoFile(), []byte(fileData))
+	return nil
+}
+
+// 解析文件内容---获取所有行
 func ParseFile(path string) []string {
 
 	lineContext := ReadFile(path)
 	var lineConTextList []string
-
 	for i, v := range lineContext {
 		if i == 0 { // 过滤掉文件第一行
 			continue
@@ -51,6 +95,10 @@ func ParseFile(path string) []string {
 		lineConTextList = append(lineConTextList, v)
 	}
 	return lineConTextList
+}
+
+func removeInfoFile() {
+	_ = os.Remove(GetUserInfoFile())
 }
 
 // 写入文件
@@ -64,7 +112,7 @@ func WriteFile(fileName string, strTest []byte) {
 	}
 	defer f.Close()
 	fmt.Println("string(strTest))", string(strTest))
-	buf := fmt.Sprintf(string(strTest) + "\n")
+	buf := fmt.Sprintf(string(strTest))
 	if _, err := f.WriteString(buf); err != nil {
 		log.Println(err)
 	}
@@ -110,7 +158,7 @@ func CheckFileExist(fileName string) bool {
 func GetUserInfoFile() string {
 	fileName := ConfigFile
 	home, _ := Home()
-	return home + "/" + fileName
+	return path.Join(home, fileName)
 }
 
 func Home() (string, error) {
@@ -154,6 +202,5 @@ func homeWindows() (string, error) {
 	if home == "" {
 		return "", errors.New("HOMEDRIVE, HOMEPATH, and USERPROFILE are blank")
 	}
-
 	return home, nil
 }

@@ -16,6 +16,8 @@ func InitRouter() *gin.Engine {
 	// 用户操作相关的router
 	r.GET("/", Index)
 	r.POST("/user/addConn", AddConn)
+	r.POST("/user/RemoveConn", RemoveConn)
+	r.POST("/user/UpdateConn", UpdateConn)
 
 	return r
 }
