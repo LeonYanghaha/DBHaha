@@ -37,7 +37,6 @@ func UpdateConn(c *gin.Context) {
 		return
 	}
 
-
 	checkId := util.ParseFileGetID(conn.Id)
 	if checkId == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "id 不合法"})
@@ -46,10 +45,10 @@ func UpdateConn(c *gin.Context) {
 	connByteSlice, ee := json.Marshal(*conn.EncryptField())
 	if ee != nil {
 		fmt.Println(ee)
+		return
 	}
-	fmt.Println("connByteStr", string(connByteSlice))
+	_ = util.UpdateFileLineById(conn.Id, string(connByteSlice))
 
-	util.WriteFile(util.GetUserInfoFile(), connByteSlice)
 	c.JSON(http.StatusBadRequest, gin.H{"error": "success"})
 	return
 }
