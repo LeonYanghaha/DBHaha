@@ -9,6 +9,7 @@ node_modules
 
 # Test binary, built with `go test -c`
 *.test
+page
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
