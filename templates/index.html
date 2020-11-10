@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ .title }}</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="./static/css/index.css">
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+</head>
+<body>
+<div id="apps">
+
+    <el-container>
+        <el-header>
+        </el-header>
+        <el-main>
+            <div v-if="isFirst" class="index-main">
+                <div class="index-main-btn">
+                    <el-button @click="newColl">新增</el-button>
+                </div>
+                <div class="index-main-coll-table">
+                    <el-table :data="connList" stripe style="width: 100%">
+                        <el-table-column prop="NickName" label="小名" width="180"></el-table-column>
+                        <el-table-column prop="Type" label="类型" width="180"></el-table-column>
+                        <el-table-column prop="Host" label="主机"></el-table-column>
+                        <el-table-column prop="Port" label="端口"></el-table-column>
+                    </el-table>
+                </div>
+            </div>
+        </el-main>
+        <el-footer>
+        </el-footer>
+    </el-container>
+
+</div>
+<script>
+    new Vue({
+        delimiters: ['${', '}$'],
+        el: '#apps',
+        data: {
+            isFirst:{{ .isFirst }},
+            connList:{{ .connList }}
+        },
+        methods: {
+            newColl() {
+                this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.$message({
+                        type: 'success',
+                        message: '删除成功!'
+                    });
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+            }
+        }
+    })
+</script>
+</body>
+</html>

@@ -3,13 +3,13 @@ package router
 import (
 	"DBHaha/util"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 func InitRouter() *gin.Engine {
 
 	r := gin.New()
-	r.LoadHTMLGlob("templates/*")
+	r.LoadHTMLGlob("templates/*.html")
+	r.Static("/static", "./templates/static")
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 	gin.SetMode(util.RunMode)
@@ -20,11 +20,11 @@ func InitRouter() *gin.Engine {
 	r.POST("/user/RemoveConn", RemoveConn)
 	r.POST("/user/UpdateConn", UpdateConn)
 
-	r.GET("/", func(c *gin.Context) {
+	r.GET("/", Index)/*func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.html", gin.H{
 			"msg":   util.ServeName,
 			"title": util.ServeName,
 		})
-	})
+	}*/
 	return r
 }

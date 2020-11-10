@@ -1,0 +1,26 @@
+.index-main {
+    /*border: 2px solid gray;*/
+    margin: 0;
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    text-align: center;
+}
+
+.index-main-btn {
+    width: 100%;
+    /*text-align: center;*/
+    padding-top: 8em;
+    /*border: 2px solid gold;*/
+}
+.index-main-coll-table{
+    width: 70em;
+    margin: auto;
+    border: 2px solid green;
+}
+
+.foot, .head {
+    border: 2px solid gold;
+    width: 100%;
+    text-align: center;
+}
