@@ -84,7 +84,7 @@ func Index(c *gin.Context) {
 	if !isFirst {
 		c.HTML(http.StatusOK, "index.html", gin.H{
 			"isFirst": !isFirst,
-			"title":   util.ServeName,
+			"title":   util.ConfInfo["ServeName"],
 		})
 		return
 	}
@@ -101,6 +101,6 @@ func Index(c *gin.Context) {
 	c.HTML(http.StatusOK, "index.html", gin.H{
 		"isFirst":  !isFirst,
 		"connList": connList,
-		"title":    util.ServeName,
+		"title":    util.ConfInfo["ServeName"],
 	})
 }

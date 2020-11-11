@@ -156,7 +156,7 @@ func CheckFileExist(fileName string) bool {
 
 // 获取当前用户的资料目录
 func GetUserInfoFile() string {
-	fileName := ConfigFile
+	fileName := ConfInfo["ConfigFile"]
 	home, _ := Home()
 	return path.Join(home, fileName)
 }

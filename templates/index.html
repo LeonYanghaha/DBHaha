@@ -10,15 +10,45 @@
 </head>
 <body>
 <div id="apps">
-
     <el-container>
         <el-header>
         </el-header>
         <el-main>
             <div v-if="isFirst" class="index-main">
                 <div class="index-main-btn">
-                    <el-button @click="newColl">新增</el-button>
+                    <el-button @click="showDialogForm">新增</el-button>
                 </div>
+
+                <el-dialog title="创建新的数据库链接" :visible.sync="dialogFormVisible" center>
+                    <el-form :model="form">
+                        <el-form-item label="数据库类型:" :label-width="formLabelWidth">
+                            <el-select v-model="form.Type" placeholder="请选择数据库类型" class="formType">
+                                <el-option label="Redis" value="redis"></el-option>
+                                <el-option label="MongoDB" value="mongodb"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="昵称:" :label-width="formLabelWidth">
+                            <el-input v-model="form.NickName" autocomplete="off"></el-input>
+                        </el-form-item>
+                        <el-form-item label="主机:" :label-width="formLabelWidth">
+                            <el-input v-model="form.Host" autocomplete="off"></el-input>
+                        </el-form-item>
+                        <el-form-item label="端口:" :label-width="formLabelWidth">
+                            <el-input v-model="form.Port" autocomplete="off"></el-input>
+                        </el-form-item>
+                        <el-form-item label="用户名:" :label-width="formLabelWidth">
+                            <el-input v-model="form.UserName" autocomplete="off"></el-input>
+                        </el-form-item>
+                        <el-form-item label="密码:" :label-width="formLabelWidth">
+                            <el-input v-model="form.PassWord" autocomplete="off"></el-input>
+                        </el-form-item>
+                    </el-form>
+                    <div slot="footer" class="dialog-footer">
+                        <el-button @click="dialogFormVisible = false">取 消</el-button>
+                        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+                    </div>
+                </el-dialog>
+
                 <div class="index-main-coll-table">
                     <el-table :data="connList" stripe style="width: 100%">
                         <el-table-column prop="NickName" label="小名" width="180"></el-table-column>
@@ -40,25 +70,24 @@
         el: '#apps',
         data: {
             isFirst:{{ .isFirst }},
-            connList:{{ .connList }}
+            dialogFormVisible: false,
+            connList:{{ .connList }},
+            form: {
+                NickName: '',
+                Type: '',
+                Host: '',
+                Port: '',
+                UserName: '',
+                PassWord: '',
+            },
+            formLabelWidth: '120px',
         },
         methods: {
-            newColl() {
-                this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning'
-                }).then(() => {
-                    this.$message({
-                        type: 'success',
-                        message: '删除成功!'
-                    });
-                }).catch(() => {
-                    this.$message({
-                        type: 'info',
-                        message: '已取消删除'
-                    });
-                });
+            showDialogForm() {
+                this.form.Host = "localhost";
+                this.form.NickName = "new collection";
+                this.form.UserName = "root";
+                this.dialogFormVisible = true;
             }
         }
     })

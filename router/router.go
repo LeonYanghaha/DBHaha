@@ -12,7 +12,7 @@ func InitRouter() *gin.Engine {
 	r.Static("/static", "./templates/static")
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
-	gin.SetMode(util.RunMode)
+	gin.SetMode(util.ConfInfo["RunMode"])
 
 	// 用户操作相关的router
 	//r.GET("/", Index)
@@ -20,7 +20,7 @@ func InitRouter() *gin.Engine {
 	r.POST("/user/RemoveConn", RemoveConn)
 	r.POST("/user/UpdateConn", UpdateConn)
 
-	r.GET("/", Index)/*func(c *gin.Context) {
+	r.GET("/", Index) /*func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.html", gin.H{
 			"msg":   util.ServeName,
 			"title": util.ServeName,

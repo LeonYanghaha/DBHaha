@@ -23,7 +23,7 @@ func PKCS7UnPadding(origData []byte) []byte {
 //AES加密
 func AesEncrypt(origDataStr string) string {
 	origData := []byte(origDataStr)
-	key := []byte(Secret)
+	key := []byte(ConfInfo["Secret"])
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		log.Println(err)
@@ -40,7 +40,7 @@ func AesEncrypt(origDataStr string) string {
 //AES解密
 func AesDecrypt(cryptedStr string) string {
 
-	key := []byte(Secret)
+	key := []byte(ConfInfo["Secret"])
 	crypted, _ := hex.DecodeString(cryptedStr)
 	block, err := aes.NewCipher(key)
 	if err != nil {
