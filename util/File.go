@@ -112,7 +112,7 @@ func WriteFile(fileName string, strTest []byte) {
 	}
 	defer f.Close()
 	fmt.Println("string(strTest))", string(strTest))
-	buf := fmt.Sprintf(string(strTest))
+	buf := fmt.Sprintf("\n" + string(strTest))
 	if _, err := f.WriteString(buf); err != nil {
 		log.Println(err)
 	}

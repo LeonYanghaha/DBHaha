@@ -70,7 +70,7 @@ func AddConn(c *gin.Context) {
 	fmt.Println("connByteStr", string(connByteSlice))
 
 	util.WriteFile(util.GetUserInfoFile(), connByteSlice)
-	c.JSON(http.StatusBadRequest, gin.H{"error": "success"})
+	c.JSON(http.StatusCreated, util.GetResData("success", 200, nil))
 	return
 }
 
@@ -98,6 +98,7 @@ func Index(c *gin.Context) {
 			connList = append(connList, *tempConn.DecryptField())
 		}
 	}
+	fmt.Println(connList)
 	c.HTML(http.StatusOK, "index.html", gin.H{
 		"isFirst":  !isFirst,
 		"connList": connList,

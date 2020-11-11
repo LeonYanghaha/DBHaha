@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
     <link rel="stylesheet" href="./static/css/index.css">
     <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 </head>
 <body>
 <div id="apps">
@@ -14,47 +15,56 @@
         <el-header>
         </el-header>
         <el-main>
-            <div v-if="isFirst" class="index-main">
+            <div class="index-main">
                 <div class="index-main-btn">
                     <el-button @click="showDialogForm">新增</el-button>
                 </div>
 
                 <el-dialog title="创建新的数据库链接" :visible.sync="dialogFormVisible" center>
-                    <el-form :model="form">
-                        <el-form-item label="数据库类型:" :label-width="formLabelWidth">
-                            <el-select v-model="form.Type" placeholder="请选择数据库类型" class="formType">
+                    <el-form :model="form" :rules="formRules">
+                        <el-form-item label="数据库类型:" :label-width="formLabelWidth" prop="type">
+                            <el-select v-model="form.type" @change="dbTypeChange" placeholder="请选择数据库类型"
+                                       class="formType">
                                 <el-option label="Redis" value="redis"></el-option>
                                 <el-option label="MongoDB" value="mongodb"></el-option>
                             </el-select>
                         </el-form-item>
-                        <el-form-item label="昵称:" :label-width="formLabelWidth">
-                            <el-input v-model="form.NickName" autocomplete="off"></el-input>
+                        <el-form-item label="昵称:" :label-width="formLabelWidth" prop="nickname">
+                            <el-input v-model="form.nickname" autocomplete="off"></el-input>
                         </el-form-item>
                         <el-form-item label="主机:" :label-width="formLabelWidth">
-                            <el-input v-model="form.Host" autocomplete="off"></el-input>
+                            <el-input v-model="form.host" autocomplete="off"></el-input>
                         </el-form-item>
-                        <el-form-item label="端口:" :label-width="formLabelWidth">
-                            <el-input v-model="form.Port" autocomplete="off"></el-input>
+                        <el-form-item label="端口:" :label-width="formLabelWidth" prop="port">
+                            <el-input v-model.number="form.port" autocomplete="off"></el-input>
                         </el-form-item>
                         <el-form-item label="用户名:" :label-width="formLabelWidth">
-                            <el-input v-model="form.UserName" autocomplete="off"></el-input>
+                            <el-input v-model="form.username" autocomplete="off"></el-input>
                         </el-form-item>
                         <el-form-item label="密码:" :label-width="formLabelWidth">
-                            <el-input v-model="form.PassWord" autocomplete="off"></el-input>
+                            <el-input v-model="form.password" autocomplete="off"></el-input>
                         </el-form-item>
                     </el-form>
                     <div slot="footer" class="dialog-footer">
                         <el-button @click="dialogFormVisible = false">取 消</el-button>
-                        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+                        <el-button type="primary" @click="submitForm">确 定</el-button>
                     </div>
                 </el-dialog>
 
                 <div class="index-main-coll-table">
                     <el-table :data="connList" stripe style="width: 100%">
-                        <el-table-column prop="NickName" label="小名" width="180"></el-table-column>
-                        <el-table-column prop="Type" label="类型" width="180"></el-table-column>
-                        <el-table-column prop="Host" label="主机"></el-table-column>
-                        <el-table-column prop="Port" label="端口"></el-table-column>
+                        <el-table-column prop="Nickname" label="小名" width="200"></el-table-column>
+                        <el-table-column prop="Type" label="类型" width="120"></el-table-column>
+                        <el-table-column prop="Host" label="主机" width="150"></el-table-column>
+                        <el-table-column prop="Port" label="端口" width="100"></el-table-column>
+                        <el-table-column prop="Username" label="用户" width="150"></el-table-column>
+                        <el-table-column fixed="right" label="操作">
+                            <template slot-scope="scope">
+                                <el-button @click="viewColl(scope.row)" type="text" size="small">查看</el-button>
+                                <el-button @click="editColl(scope.row)" type="text" size="small">编辑</el-button>
+                                <el-button @click="deleteColl(scope.row)" type="text" size="small">删除</el-button>
+                            </template>
+                        </el-table-column>
                     </el-table>
                 </div>
             </div>
@@ -73,21 +83,56 @@
             dialogFormVisible: false,
             connList:{{ .connList }},
             form: {
-                NickName: '',
-                Type: '',
-                Host: '',
-                Port: '',
-                UserName: '',
-                PassWord: '',
+                nickname: '',
+                type: '',
+                host: '',
+                port: '',
+                username: '',
+                password: '',
             },
             formLabelWidth: '120px',
+            formRules: {
+                nickname: [
+                    {required: true, message: '请输入链接名字', trigger: 'blur'},
+                    {min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur'}
+                ],
+                port: [
+                    {required: true, message: '端口不能为空'},
+                    {type: 'number', message: '端口必须为数字值'}
+                ],
+                type: [
+                    {required: true, message: '请选择活动区域', trigger: 'change'}
+                ],
+            }
         },
         methods: {
+            async submitForm() {
+                const res = await axios.post('/user/addConn', this.form);
+                this.dialogFormVisible = false;
+                if (res.status === 201) {
+                    this.$message({message: '添加成功', type: 'success'});
+                    location.reload();
+                } else {
+                    this.$message.error(res.statusText);
+                }
+            },
+            viewColl(coll) {
+                console.log(coll);
+            },
+            editColl(coll) {
+                console.log(coll);
+            },
+            deleteColl(coll) {
+                console.log(coll);
+            },
             showDialogForm() {
-                this.form.Host = "localhost";
-                this.form.NickName = "new collection";
-                this.form.UserName = "root";
+                this.form.host = "localhost";
+                this.form.nickname = "new collection";
                 this.dialogFormVisible = true;
+            },
+            dbTypeChange() {
+                if (this.form.type === "redis") this.form.port = 6379;
+                if (this.form.type === "mongodb") this.form.port = 27017;
             }
         }
     })
