@@ -5,10 +5,9 @@ import (
 	"time"
 )
 
-func GetResData(msg string, code int, data interface{}) map[string]interface{} {
+func GetResData(msg string, data interface{}) map[string]interface{} {
 	resMap := make(map[string]interface{})
 	resMap["msg"] = msg
-	resMap["code"] = code
 	resMap["data"] = data
 	return resMap
 }

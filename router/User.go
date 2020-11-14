@@ -11,21 +11,23 @@ import (
 
 // 删除conn
 func RemoveConn(c *gin.Context) {
-
-	cid := c.PostForm("cid")
+	var cid string
+	if cid = c.PostForm("cid"); cid == "" {
+		c.JSON(http.StatusInternalServerError, util.GetResData("id 不合法", nil))
+		return
+	}
 
 	checkId := util.ParseFileGetID(cid)
 	if checkId == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "id 不合法"})
+		c.JSON(http.StatusInternalServerError, util.GetResData("id 不合法", nil))
 		return
 	}
 	err := util.DeleteFileLineById(cid)
-
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err})
+		c.JSON(http.StatusInternalServerError, util.GetResData("删除错误，请重试", nil))
 		return
 	}
-	c.JSON(http.StatusBadRequest, gin.H{"error": "success"})
+	c.JSON(http.StatusOK, util.GetResData("success", nil))
 
 }
 
@@ -70,7 +72,7 @@ func AddConn(c *gin.Context) {
 	fmt.Println("connByteStr", string(connByteSlice))
 
 	util.WriteFile(util.GetUserInfoFile(), connByteSlice)
-	c.JSON(http.StatusCreated, util.GetResData("success", 200, nil))
+	c.JSON(http.StatusCreated, util.GetResData("success", nil))
 	return
 }
 

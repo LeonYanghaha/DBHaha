@@ -140,7 +140,7 @@ func initFile(fileName string) {
 	}
 	defer f.Close()
 
-	if _, err := f.WriteString("---DBHaha configuration file, please do not modify it at will---" + "\n"); err != nil {
+	if _, err := f.WriteString("---DBHaha configuration file, please do not modify it at will---"); err != nil {
 		log.Println(err)
 	}
 }

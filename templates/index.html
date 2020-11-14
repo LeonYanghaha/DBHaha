@@ -17,7 +17,28 @@
         <el-main>
             <div class="index-main">
                 <div class="index-main-btn">
-                    <el-button @click="showDialogForm">新增</el-button>
+
+                    <el-button size="small" @click="showDialogForm">多选</el-button>
+                    <el-button size="small" @click="showDialogForm">新增</el-button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <el-dropdown trigger="click">
+                        <span class="el-dropdown-link">
+                          更多操作<i class="el-icon-caret-bottom el-icon--right"></i>
+                        </span>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item class="clearfix">
+                                导入数据库链接
+                                <el-badge class="mark"/>
+                            </el-dropdown-item>
+                            <el-dropdown-item class="clearfix">
+                                导出数据库链接
+                                <el-badge class="mark"/>
+                            </el-dropdown-item>
+                            <el-dropdown-item class="clearfix">
+                                了解DBHaha ～
+                                <el-badge class="mark"/>
+                            </el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
                 </div>
 
                 <el-dialog title="创建新的数据库链接" :visible.sync="dialogFormVisible" center>
@@ -52,7 +73,7 @@
                 </el-dialog>
 
                 <div class="index-main-coll-table">
-                    <el-table :data="connList" stripe style="width: 100%">
+                    <el-table :data="connList" stripe border style="width: 90%; margin: auto;text-align: center">
                         <el-table-column prop="Nickname" label="小名" width="200"></el-table-column>
                         <el-table-column prop="Type" label="类型" width="120"></el-table-column>
                         <el-table-column prop="Host" label="主机" width="150"></el-table-column>
@@ -60,6 +81,7 @@
                         <el-table-column prop="Username" label="用户" width="150"></el-table-column>
                         <el-table-column fixed="right" label="操作">
                             <template slot-scope="scope">
+                                <el-button @click="openColl(scope.row)" type="text" size="small">链接</el-button>
                                 <el-button @click="viewColl(scope.row)" type="text" size="small">查看</el-button>
                                 <el-button @click="editColl(scope.row)" type="text" size="small">编辑</el-button>
                                 <el-button @click="deleteColl(scope.row)" type="text" size="small">删除</el-button>
@@ -90,7 +112,7 @@
                 username: '',
                 password: '',
             },
-            formLabelWidth: '120px',
+            formLabelWidth: '150px',
             formRules: {
                 nickname: [
                     {required: true, message: '请输入链接名字', trigger: 'blur'},
@@ -122,7 +144,18 @@
             editColl(coll) {
                 console.log(coll);
             },
-            deleteColl(coll) {
+            async deleteColl(coll) {
+                const params = new URLSearchParams();
+                params.append('cid', coll.Id);
+                const res = await axios.post('/user/RemoveConn', params);
+                if (res.status === 200) {
+                    this.$message({message: '添加成功', type: 'success'});
+                    location.reload();
+                } else {
+                    this.$message.error(res.body.data.message);
+                }
+            },
+            openColl(coll) {
                 console.log(coll);
             },
             showDialogForm() {
