@@ -15,16 +15,10 @@ func InitRouter() *gin.Engine {
 	gin.SetMode(util.ConfInfo["RunMode"])
 
 	// 用户操作相关的router
-	//r.GET("/", Index)
 	r.POST("/user/addConn", AddConn)
 	r.POST("/user/RemoveConn", RemoveConn)
 	r.POST("/user/UpdateConn", UpdateConn)
 
-	r.GET("/", Index) /*func(c *gin.Context) {
-		c.HTML(http.StatusOK, "index.html", gin.H{
-			"msg":   util.ServeName,
-			"title": util.ServeName,
-		})
-	}*/
+	r.GET("/", Index)
 	return r
 }

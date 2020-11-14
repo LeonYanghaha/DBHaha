@@ -20,7 +20,6 @@ func ReadFile(path string) []string {
 	fi, err := os.Open(path)
 	var lineContext []string
 	if err != nil {
-		fmt.Printf("Error: %s\n", err)
 		return lineContext
 	}
 	defer fi.Close()
@@ -111,7 +110,6 @@ func WriteFile(fileName string, strTest []byte) {
 		log.Println(err)
 	}
 	defer f.Close()
-	fmt.Println("string(strTest))", string(strTest))
 	buf := fmt.Sprintf("\n" + string(strTest))
 	if _, err := f.WriteString(buf); err != nil {
 		log.Println(err)

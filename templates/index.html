@@ -18,8 +18,8 @@
             <div class="index-main">
                 <div class="index-main-btn">
 
-                    <el-button size="small" @click="showDialogForm">多选</el-button>
-                    <el-button size="small" @click="showDialogForm">新增</el-button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <el-button size="small" @click="showDialogForm"><i class="el-icon-document-add"></i>&nbsp;&nbsp;多选</el-button>
+                    <el-button size="small" @click="showDialogForm"><i class="el-icon-circle-plus-outline"></i>&nbsp;&nbsp;新增</el-button>&nbsp;&nbsp;&nbsp;&nbsp;
                     <el-dropdown trigger="click">
                         <span class="el-dropdown-link">
                           更多操作<i class="el-icon-caret-bottom el-icon--right"></i>
@@ -41,29 +41,33 @@
                     </el-dropdown>
                 </div>
 
-                <el-dialog title="创建新的数据库链接" :visible.sync="dialogFormVisible" center>
+                <el-dialog :title='dialogTitle' :visible.sync="dialogFormVisible" center>
                     <el-form :model="form" :rules="formRules">
                         <el-form-item label="数据库类型:" :label-width="formLabelWidth" prop="type">
-                            <el-select v-model="form.type" @change="dbTypeChange" placeholder="请选择数据库类型"
-                                       class="formType">
+                            <el-select v-model="form.type" :disabled="dialogCanEdit" @change="dbTypeChange"
+                                       placeholder="请选择数据库类型" class="formType">
                                 <el-option label="Redis" value="redis"></el-option>
                                 <el-option label="MongoDB" value="mongodb"></el-option>
                             </el-select>
                         </el-form-item>
                         <el-form-item label="昵称:" :label-width="formLabelWidth" prop="nickname">
-                            <el-input v-model="form.nickname" autocomplete="off"></el-input>
+                            <el-input v-model="form.nickname" :disabled="dialogCanEdit" autocomplete="off"></el-input>
                         </el-form-item>
                         <el-form-item label="主机:" :label-width="formLabelWidth">
-                            <el-input v-model="form.host" autocomplete="off"></el-input>
+                            <el-input v-model="form.host" :disabled="dialogCanEdit" autocomplete="off"></el-input>
                         </el-form-item>
                         <el-form-item label="端口:" :label-width="formLabelWidth" prop="port">
-                            <el-input v-model.number="form.port" autocomplete="off"></el-input>
+                            <el-input v-model.number="form.port" :disabled="dialogCanEdit"
+                                      autocomplete="off"></el-input>
                         </el-form-item>
                         <el-form-item label="用户名:" :label-width="formLabelWidth">
-                            <el-input v-model="form.username" autocomplete="off"></el-input>
+                            <el-input v-model="form.username" :disabled="dialogCanEdit" autocomplete="off"></el-input>
                         </el-form-item>
                         <el-form-item label="密码:" :label-width="formLabelWidth">
                             <el-input v-model="form.password" autocomplete="off"></el-input>
+                        </el-form-item>
+                        <el-form-item label="id:" :label-width="formLabelWidth" style="display: none">
+                            <el-input v-model="form.id" autocomplete="off"></el-input>
                         </el-form-item>
                     </el-form>
                     <div slot="footer" class="dialog-footer">
@@ -101,10 +105,13 @@
         delimiters: ['${', '}$'],
         el: '#apps',
         data: {
+            dialogTitle: "创建新的数据库链接",
+            dialogCanEdit: true,
             isFirst:{{ .isFirst }},
             dialogFormVisible: false,
             connList:{{ .connList }},
             form: {
+                id: '',
                 nickname: '',
                 type: '',
                 host: '',
@@ -129,39 +136,66 @@
         },
         methods: {
             async submitForm() {
+                this.dialogTitle = "创建新的数据库链接";
                 const res = await axios.post('/user/addConn', this.form);
                 this.dialogFormVisible = false;
-                if (res.status === 201) {
-                    this.$message({message: '添加成功', type: 'success'});
+                if (res.status === 201 || res.status === 200) {
                     location.reload();
+                    this.$message({message: '添加成功', type: 'success'});
                 } else {
                     this.$message.error(res.statusText);
                 }
             },
             viewColl(coll) {
-                console.log(coll);
+                this.changeDialogStatus(coll, "查看链接", true);
+                this.dialogFormVisible = true;
             },
             editColl(coll) {
-                console.log(coll);
+                this.changeDialogStatus(coll, "编辑链接", false);
+                this.dialogFormVisible = true;
             },
             async deleteColl(coll) {
-                const params = new URLSearchParams();
-                params.append('cid', coll.Id);
-                const res = await axios.post('/user/RemoveConn', params);
-                if (res.status === 200) {
-                    this.$message({message: '添加成功', type: 'success'});
-                    location.reload();
-                } else {
-                    this.$message.error(res.body.data.message);
-                }
+
+                this.$confirm('此操作将永久删除, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(async () => {
+                    const params = new URLSearchParams();
+                    params.append('cid', coll.Id);
+                    const res = await axios.post('/user/RemoveConn', params);
+                    if (res.status === 200) {
+                        location.reload();
+                        this.$message({message: '添加成功', type: 'success'});
+                    } else {
+                        this.$message.error(res.body.data.message);
+                    }
+                }).catch(() => {
+                    // 点击取消
+                });
             },
             openColl(coll) {
                 console.log(coll);
             },
             showDialogForm() {
-                this.form.host = "localhost";
-                this.form.nickname = "new collection";
+                this.changeDialogStatus(null, "创建新的数据库链接", false);
                 this.dialogFormVisible = true;
+            },
+            changeDialogStatus(coll, title, canEdit) {
+
+                if (!coll) coll = {};
+
+                this.dialogTitle = title || "创建新的数据库链接";
+                this.dialogCanEdit = Boolean(canEdit);
+
+                this.form.host = coll.Host || "localhost";
+                this.form.nickname = coll.Nickname || "new collection";
+                this.form.username = coll.Username || "";
+                this.form.password = coll.Password || "";
+                this.form.port = coll.Port || "";
+                this.form.id = coll.Id || "";
+                this.form.type = coll.Type || "";
+
             },
             dbTypeChange() {
                 if (this.form.type === "redis") this.form.port = 6379;

@@ -46,7 +46,6 @@ func UpdateConn(c *gin.Context) {
 	}
 	connByteSlice, ee := json.Marshal(*conn.EncryptField())
 	if ee != nil {
-		fmt.Println(ee)
 		return
 	}
 	_ = util.UpdateFileLineById(conn.Id, string(connByteSlice))
@@ -63,14 +62,19 @@ func AddConn(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	if conn.Id != "" {
+		// 是更新的情况
+		connStr, _ := json.Marshal(*conn.EncryptField())
+		_ = util.UpdateFileLineById(conn.Id, string(connStr))
+		c.JSON(http.StatusCreated, util.GetResData("success", nil))
+		return
+	}
+
 	conn.Id = util.GetRandomString(24)
-	fmt.Println("conn", conn)
 	connByteSlice, ee := json.Marshal(*conn.EncryptField())
 	if ee != nil {
 		fmt.Println(ee)
 	}
-	fmt.Println("connByteStr", string(connByteSlice))
-
 	util.WriteFile(util.GetUserInfoFile(), connByteSlice)
 	c.JSON(http.StatusCreated, util.GetResData("success", nil))
 	return
@@ -100,7 +104,6 @@ func Index(c *gin.Context) {
 			connList = append(connList, *tempConn.DecryptField())
 		}
 	}
-	fmt.Println(connList)
 	c.HTML(http.StatusOK, "index.html", gin.H{
 		"isFirst":  !isFirst,
 		"connList": connList,
