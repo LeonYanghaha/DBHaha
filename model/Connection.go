@@ -4,6 +4,7 @@ import (
 	"DBHaha/util"
 )
 
+// TODO 增加一个添加时间
 type Connection struct {
 	Id       string `form:"id" json:"Id" xml:"id"`
 	NickName string `form:"nickname" json:"Nickname" xml:"nickname"  binding:"required"`

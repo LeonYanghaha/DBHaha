@@ -18,8 +18,10 @@
             <div class="index-main">
                 <div class="index-main-btn">
 
-                    <el-button size="small" @click="showDialogForm"><i class="el-icon-document-add"></i>&nbsp;&nbsp;多选</el-button>
-                    <el-button size="small" @click="showDialogForm"><i class="el-icon-circle-plus-outline"></i>&nbsp;&nbsp;新增</el-button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <el-button size="small" @click="showDialogForm"><i class="el-icon-document-add"></i>&nbsp;&nbsp;多选
+                    </el-button>
+                    <el-button size="small" @click="showDialogForm"><i class="el-icon-circle-plus-outline"></i>&nbsp;&nbsp;新增
+                    </el-button>&nbsp;&nbsp;&nbsp;&nbsp;
                     <el-dropdown trigger="click">
                         <span class="el-dropdown-link">
                           更多操作<i class="el-icon-caret-bottom el-icon--right"></i>
@@ -175,7 +177,7 @@
                 });
             },
             openColl(coll) {
-                console.log(coll);
+                window.open(`/redis/open/${coll.Id}`, "_self")
             },
             showDialogForm() {
                 this.changeDialogStatus(null, "创建新的数据库链接", false);
