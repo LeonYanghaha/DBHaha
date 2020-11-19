@@ -24,9 +24,9 @@ func OpenRedis(c *gin.Context) {
 		return
 	}
 
-	if idIsConnected := util.GetCtx(cid); idIsConnected != nil {
+	if idIsConnectioned := util.GetCtx(cid); idIsConnectioned != nil {
 		c.HTML(http.StatusOK, "redis.html", gin.H{
-			"uuid":  conn.Id,
+			"conn":  conn,
 			"title": util.ConfInfo["ServeName"] + conn.NickName,
 		})
 		return
@@ -42,11 +42,10 @@ func OpenRedis(c *gin.Context) {
 		MyContext: nil,
 	}
 	redisInfo = util.GetRedisClient(redisInfo)
-	uuid := util.GetRandomString(30)
-	c.Request.Header.Set("UUID", uuid)
 
 	c.HTML(http.StatusOK, "redis.html", gin.H{
-		"uuid":  conn.Id,
+		"conn":  conn,
 		"title": util.ConfInfo["ServeName"] + conn.NickName,
 	})
+
 }

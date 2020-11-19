@@ -177,7 +177,8 @@
                 });
             },
             openColl(coll) {
-                window.open(`/redis/open/${coll.Id}`, "_self")
+
+                window.open(`/${coll.type}/open/${coll.Id}`, "_self")
             },
             showDialogForm() {
                 this.changeDialogStatus(null, "创建新的数据库链接", false);
