@@ -5,28 +5,43 @@
     <title>{{ .title }}</title>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
-    <link rel="stylesheet" href="/static/css/index.css">
+    <link rel="stylesheet" href="/static/css/redis.css">
     <script src="https://unpkg.com/element-ui/lib/index.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 </head>
 <body>
-<div id="apps">
+<div id="redis">
     <el-container>
         <el-container>
             <el-aside width="300px">
                 <el-card class="box-card">
-                    <span>{{ .conn.Host}}{{.conn.Port}}</span>
-                    <br/>
-                    <el-select v-model="dbList" placeholder="请选择活动区域">
-                        <el-option v-for="index in 15" :key="index" label="DB${index}$" value="index"></el-option>
-                    </el-select>
+                    <div class="redis-aside">
+                        <div class="redis-aside-meta">
+                            <span>{{ .conn.Host}}:{{.conn.Port}}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <i class="el-icon-refresh-right"></i><i class="el-icon-close"></i>
+                        </div>
+                        <br/>
+                        <el-select v-model="dbNo" @change="dbNoChange">
+                            <el-option v-for="index in 16" :key="index-1" :label="'DB' + (index-1)" :value="index-1"
+                                       size="medium">
+                            </el-option>
+                        </el-select>
+                    </div>
                 </el-card>
 
 
             </el-aside>
             <el-container>
-                <el-header>Header</el-header>
-                <el-main>Main</el-main>
+                <el-header>
+                    <div class="redis-head">
+                        head
+                    </div>
+                </el-header>
+                <el-main>
+                    <div class="redis-main">
+                        main
+                    </div>
+                </el-main>
             </el-container>
         </el-container>
     </el-container>
@@ -35,63 +50,19 @@
 <script>
     new Vue({
         delimiters: ['${', '}$'],
-        el: '#apps',
+        el: '#redis',
         data: {
             conn:{{.conn}},
-            dbList: "",
+            dbNo: 0,
         },
         methods: {
-            async deleteColl(coll) {
+            async dbNoChange() {
+                console.log(this.dbNo);
             },
         }
     })
 </script>
 <style type="text/css">
-    .el-header, .el-footer {
-        background-color: #B3C0D1;
-        color: #333;
-        text-align: center;
-        line-height: 60px;
-    }
-
-    .el-aside {
-        background-color: #D3DCE6;
-        color: #333;
-        text-align: center;
-        line-height: 200px;
-    }
-
-    .el-main {
-        background-color: #E9EEF3;
-        color: #333;
-        text-align: center;
-        line-height: 160px;
-    }
-
-    body > .el-container {
-        margin-bottom: 40px;
-    }
-
-    .el-container:nth-child(5) .el-aside,
-    .el-container:nth-child(6) .el-aside {
-        line-height: 260px;
-    }
-
-    .el-container:nth-child(7) .el-aside {
-        line-height: 320px;
-    }
-
-    .text {
-        font-size: 14px;
-    }
-
-    .item {
-        padding: 18px 0;
-    }
-
-    .box-card {
-        width: 480px;
-    }
 </style>
 </body>
 </html>

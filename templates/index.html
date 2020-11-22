@@ -144,9 +144,7 @@
                 if (res.status === 201 || res.status === 200) {
                     location.reload();
                     this.$message({message: '添加成功', type: 'success'});
-                } else {
-                    this.$message.error(res.statusText);
-                }
+                } else this.$message.error(res.statusText);
             },
             viewColl(coll) {
                 this.changeDialogStatus(coll, "查看链接", true);
@@ -169,16 +167,14 @@
                     if (res.status === 200) {
                         location.reload();
                         this.$message({message: '添加成功', type: 'success'});
-                    } else {
-                        this.$message.error(res.body.data.message);
-                    }
+                    } else this.$message.error(res.body.data.message);
                 }).catch(() => {
                     // 点击取消
                 });
             },
             openColl(coll) {
 
-                window.open(`/${coll.type}/open/${coll.Id}`, "_self")
+                window.open(`/${coll.Type}/open/${coll.Id}`, "_self")
             },
             showDialogForm() {
                 this.changeDialogStatus(null, "创建新的数据库链接", false);
