@@ -13,7 +13,7 @@
 <div id="redis">
     <el-container>
         <el-container>
-            <el-aside width="300px">
+            <el-aside width="240px">
                 <el-card class="box-card">
                     <div class="redis-aside">
                         <div class="redis-aside-meta">
@@ -26,6 +26,10 @@
                                        size="medium">
                             </el-option>
                         </el-select>
+                    </div>
+                </el-card>
+                <el-card class="box-card">
+                    <div class="redis-aside-key-list">
                     </div>
                 </el-card>
 
@@ -54,11 +58,21 @@
         data: {
             conn:{{.conn}},
             dbNo: 0,
+            keyList: [],
         },
         methods: {
             async dbNoChange() {
                 console.log(this.dbNo);
             },
+        },
+        async created() {
+            // const params = new URLSearchParams();
+            // params.append('cid', this.coll.Id);
+            const res = await axios.post(`/redis/op/${this.conn.Id}/keys`);
+            console.log(res);
+            // if (res.status === 200) {
+            // } else
+
         }
     })
 </script>

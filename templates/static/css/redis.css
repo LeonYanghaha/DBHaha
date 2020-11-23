@@ -1,9 +1,9 @@
 .redis-aside{
-    border: 2px solid goldenrod;
+    /*border: 2px solid goldenrod;*/
 }
 .redis-aside-meta{
-    border: 1px solid firebrick;
-    padding: 1em;
+    /*border: 1px solid firebrick;*/
+    padding: 0.2em;
 }
 .redis-aside-meta i {
   padding-left: 1em;

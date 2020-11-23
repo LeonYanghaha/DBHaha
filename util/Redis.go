@@ -2,9 +2,23 @@ package util
 
 import (
 	"context"
+	"fmt"
 	"github.com/go-redis/redis/v8"
 	"time"
 )
+
+var ctxList = make(map[string]RedisInfo)
+
+func PutCtx(id string, dbInfo RedisInfo) {
+	ctxList[id] = dbInfo
+}
+
+func GetCtx(id string) bool {
+	if _, ok := ctxList[id]; ok {
+		return true
+	}
+	return false
+}
 
 type RedisInfo struct {
 	Addr      string
@@ -24,6 +38,14 @@ func GetRedisClient(redisInfo RedisInfo) RedisInfo {
 	redisInfo.MyClient = *rdb
 	redisInfo.MyContext = context.Background()
 	return redisInfo
+}
+
+// 获取所有的key
+func (r RedisInfo) Keys(pattern string) *string {
+	s := r.MyClient.Keys(r.MyContext, "*")
+	//TODO 明天从这里开始 。。。。。
+	println(s)
+	return nil
 }
 
 //设置指定 key 的值
@@ -151,4 +173,13 @@ func (r RedisInfo) HVals(key string) *redis.StringSliceCmd {
 //迭代哈希表中的键值对。
 func (r RedisInfo) HScan(key string, cursor uint64, match string, count int64) *redis.ScanCmd {
 	return r.MyClient.HScan(r.MyContext, key, cursor, match, count)
+}
+
+func ExecCmd(id, cmd, param string) {
+	if !GetCtx(id) {
+		fmt.Println("严重错误")
+		return
+	}
+	var temp = ctxList[id]
+	temp.Keys("")
 }
