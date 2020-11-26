@@ -25,9 +25,13 @@ func OpRedis(c *gin.Context) {
 		return
 	}
 	conn = *conn.DecryptField()
-	util.ExecCmd(conn.Id, "", "")
-	c.JSON(http.StatusInternalServerError, util.GetResData("success", nil))
+	data := util.ExecCmd(conn.Id, "keys", "*")
 
+	if data != nil {
+		c.JSON(http.StatusAccepted, util.GetResData("success", data))
+		return
+	}
+	c.JSON(http.StatusInternalServerError, util.GetResData("文件解析错误", nil))
 }
 
 func OpenRedis(c *gin.Context) {

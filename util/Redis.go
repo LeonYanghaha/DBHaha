@@ -41,11 +41,8 @@ func GetRedisClient(redisInfo RedisInfo) RedisInfo {
 }
 
 // 获取所有的key
-func (r RedisInfo) Keys(pattern string) *string {
-	s := r.MyClient.Keys(r.MyContext, "*")
-	//TODO 明天从这里开始 。。。。。
-	println(s)
-	return nil
+func (r RedisInfo) Keys(pattern string) *redis.StringSliceCmd {
+	return r.MyClient.Keys(r.MyContext, pattern)
 }
 
 //设置指定 key 的值
@@ -175,11 +172,21 @@ func (r RedisInfo) HScan(key string, cursor uint64, match string, count int64) *
 	return r.MyClient.HScan(r.MyContext, key, cursor, match, count)
 }
 
-func ExecCmd(id, cmd, param string) {
+func ExecCmd(id, cmd, param string) interface{} {
 	if !GetCtx(id) {
-		fmt.Println("严重错误")
-		return
+		_ = fmt.Errorf("ExecCmd")
+		return nil
 	}
 	var temp = ctxList[id]
-	temp.Keys("")
+	var data *redis.StringSliceCmd
+	switch cmd {
+	case "keys":
+		data = temp.Keys("*")
+		break
+	case "get":
+		// data = temp.Get(param)
+		break
+	default:
+	}
+	return data.Val()
 }
